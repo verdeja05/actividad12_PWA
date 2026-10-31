@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2f4b8a">
+  <meta name="description" content="Registro y seguimiento de tareas con ubicacion y avisos de vencimiento">
+  <title>Tareas PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="barra">
+    <div class="marca">
+      <img src="icons/icon.svg" alt="" width="30" height="30">
+      <h1>Mis tareas</h1>
+    </div>
+    <div class="barra-der">
+      <span id="estadoRed" class="chip-red" role="status">Verificando...</span>
+      <button id="btnAvisos" class="btn-icono" type="button" title="Activar avisos" aria-label="Activar avisos"></button>
+    </div>
+  </header>
+
+  <div id="bannerSync" class="banner" hidden></div>
+
+  <main>
+    <!-- Resumen -->
+    <section class="resumen" aria-label="Resumen de tareas">
+      <div class="contador"><span id="cPendientes">0</span><small>Pendientes</small></div>
+      <div class="contador"><span id="cProgreso">0</span><small>En progreso</small></div>
+      <div class="contador"><span id="cCompletadas">0</span><small>Completadas</small></div>
+      <div class="contador alerta"><span id="cVencidas">0</span><small>Vencidas</small></div>
+    </section>
+
+    <!-- Filtros y alta -->
+    <section class="herramientas">
+      <div class="filtros" role="tablist" aria-label="Filtrar tareas">
+        <button class="filtro activo" data-filtro="todas" type="button">Todas</button>
+        <button class="filtro" data-filtro="pendiente" type="button">Pendientes</button>
+        <button class="filtro" data-filtro="en_progreso" type="button">En progreso</button>
+        <button class="filtro" data-filtro="completada" type="button">Completadas</button>
+        <button class="filtro" data-filtro="vencidas" type="button">Vencidas</button>
+      </div>
+      <button id="btnNueva" class="btn primario" type="button"></button>
+    </section>
+
+    <!-- Formulario de registro y edicion -->
+    <section id="panelForm" class="tarjeta" hidden>
+      <h2 id="tituloForm">Nueva tarea</h2>
+      <form id="formTarea" novalidate>
+        <label>Titulo
+          <input id="fTitulo" type="text" maxlength="80" required placeholder="Ej. Entregar reporte de practicas">
+        </label>
+        <label>Descripcion
+          <textarea id="fDescripcion" rows="3" maxlength="500" placeholder="Detalles de la actividad"></textarea>
+        </label>
+        <div class="fila">
+          <label>Fecha limite
+            <input id="fFecha" type="datetime-local" required>
+          </label>
+          <label>Estado
+            <select id="fEstado">
+              <option value="pendiente">Pendiente</option>
+              <option value="en_progreso">En progreso</option>
+              <option value="completada">Completada</option>
+            </select>
+          </label>
+        </div>
+
+        <fieldset class="ubicacion">
+          <legend>Ubicacion (opcional)</legend>
+          <p id="ubicTexto" class="ubic-texto">Sin ubicacion registrada.</p>
+          <div id="confirmUbic" class="confirmacion" hidden>
+            <p>Para registrar el lugar donde se realizara la tarea se usara la ubicacion de tu dispositivo. Tu navegador te pedira autorizacion. Puedes guardar la tarea sin ubicacion si no deseas compartirla.</p>
+            <div class="acciones">
+              <button id="btnPermitirUbic" class="btn primario" type="button">Permitir y obtener</button>
+              <button id="btnCancelarUbic" class="btn" type="button">Ahora no</button>
+            </div>
+          </div>
+          <div class="acciones">
+            <button id="btnUbicacion" class="btn" type="button"></button>
+            <button id="btnQuitarUbic" class="btn" type="button" hidden>Quitar ubicacion</button>
+          </div>
+        </fieldset>
+
+        <p id="errorForm" class="error" role="alert" hidden></p>
+        <div class="acciones">
+          <button class="btn primario" type="submit" id="btnGuardar">Guardar tarea</button>
+          <button class="btn" type="button" id="btnCancelar">Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Listado -->
+    <section aria-label="Listado de tareas">
+      <div id="lista" class="lista"></div>
+    </section>
+
+    <!-- Estado de las APIs -->
+    <details class="tarjeta sistema">
+      <summary>Estado del sistema</summary>
+      <table>
+        <tbody id="tablaCapacidades"></tbody>
+      </table>
+      <div class="acciones">
+        <button id="btnSincronizar" class="btn" type="button">Sincronizar ahora</button>
+        <button id="btnPruebaPush" class="btn" type="button">Probar notificacion push</button>
+      </div>
+    </details>
+  </main>
+
+  <!-- Detalle de tarea -->
+  <dialog id="dlgDetalle">
+    <article>
+      <header class="dlg-cab">
+        <h2 id="dTitulo"></h2>
+        <button id="btnCerrarDetalle" class="btn-icono oscuro" type="button" aria-label="Cerrar"></button>
+      </header>
+      <div id="dCuerpo"></div>
+    </article>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

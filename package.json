@@ -1,0 +1,17 @@
+{
+  "name": "tareas-pwa",
+  "version": "1.0.0",
+  "description": "PWA para seguimiento de tareas con ubicacion, funcionamiento offline y avisos de vencimiento",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "web-push": "^3.6.7"
+  }
+}
